@@ -9,17 +9,47 @@ public class Enemy : MonoBehaviour {
 
     Player player;
     private Transform playerTransform;
+    private Rigidbody2D myRigidBody;
 
     // Start is called before the first frame update
     void Start() {
         // playerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         player = FindObjectOfType<Player>();
         playerTransform = player.GetComponent<Transform>();
+        myRigidBody = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update() {
-        ChasePlayer();
+        if (isAlive == true) {
+            ChasePlayer();
+        }
+
+        HandleDead();
+
+
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collider) {
+        CheckCollisionWithBullet(collider);
+    }
+
+    private void CheckCollisionWithBullet(Collider2D collider) {
+        bool isBullet = collider.CompareTag("Bullet");
+        if (isBullet == true) {
+            DecrementHealth();
+            Debug.Log("Collision Detected with " + gameObject.name);
+        }
+    }
+
+    private void HandleDead() {
+        if (health <= 0) {
+            myRigidBody.gravityScale = 2;
+            SetAlive(false);
+            // Destroy(gameObject);
+            Debug.Log("Dead " + gameObject.name);
+        }
     }
 
     private void ChasePlayer() {

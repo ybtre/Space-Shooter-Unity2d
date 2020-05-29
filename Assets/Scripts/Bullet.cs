@@ -9,28 +9,33 @@ public class Bullet : MonoBehaviour {
     [SerializeField] bool isAlive = false;
     Player player;
     Rigidbody2D myRigidBody2D;
-    Vector2 bulletSpawnOnGunVector;
     // Start is called before the first frame update
     void Start() {
-        // bulletSpawnOnGunVector = transform.position - player.transform.position;
         player = FindObjectOfType<Player>();
         myRigidBody2D = GetComponent<Rigidbody2D>();
-
-        // bulletSpawnOnGunVector.x = player.transform.position.x + 2;
-        // spawnBulletAtGunPosition();
     }
 
     // Update is called once per frame
     void Update() {
-        // spawnBulletAtGunPosition();
+        FireBullet();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider) {
+        CheckCollisionWithEnemy(collider);
+    }
+
+    private void FireBullet() {
         if (Input.GetKeyDown(KeyCode.Space)) {
             transform.position = player.transform.position;
             myRigidBody2D.velocity = new Vector2(-speed, 0);
         }
     }
 
-    // private void spawnBulletAtGunPosition() {
-    //     Vector2 playerShipPos = new Vector2(player.transform.position.x, player.transform.position.y);
-    //     transform.position = playerShipPos + bulletSpawnOnGunVector;
-    // }
+    private void CheckCollisionWithEnemy(Collider2D collider) {
+        bool isEnemy = collider.CompareTag("Enemy");
+        if (isEnemy == true) {
+            Destroy(gameObject);
+            Debug.Log("Collision Detected with " + gameObject.name);
+        }
+    }
 }

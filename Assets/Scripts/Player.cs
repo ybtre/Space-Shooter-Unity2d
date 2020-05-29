@@ -33,16 +33,16 @@ public class Player : MonoBehaviour {
 
         switch (direction) {
             case "up":
-                moveShip.y += speed;
+                moveShip.y += speed * Time.deltaTime;
                 break;
             case "down":
-                moveShip.y += -speed;
+                moveShip.y += -speed * Time.deltaTime;
                 break;
             case "left":
-                moveShip.x += -speed;
+                moveShip.x += -speed * Time.deltaTime;
                 break;
             case "right":
-                moveShip.x += speed;
+                moveShip.x += speed * Time.deltaTime;
                 break;
             default:
                 break;

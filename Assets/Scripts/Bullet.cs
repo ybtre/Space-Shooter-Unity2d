@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour {
     [SerializeField] bool hasFired = false;
     [SerializeField] bool isAlive = false;
     Player player;
+    PlayerShoot bulletInstance;
     Rigidbody2D myRigidBody2D;
     // Start is called before the first frame update
     void Start() {
@@ -17,24 +18,26 @@ public class Bullet : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        FireBullet();
+        Velocity();
+        HandleDeathOnTimer();
+    }
+
+    private void HandleDeathOnTimer() {
+        Destroy(gameObject, 3f);
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {
         CheckCollisionWithEnemy(collider);
     }
 
-    private void FireBullet() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            transform.position = player.transform.position;
-            myRigidBody2D.velocity = new Vector2(-speed, 0);
-        }
+    private void Velocity() {
+        myRigidBody2D.velocity = new Vector2(-speed, 0);
     }
 
     private void CheckCollisionWithEnemy(Collider2D collider) {
         bool isEnemy = collider.CompareTag("Enemy");
         if (isEnemy == true) {
-            Destroy(gameObject);
+            // Destroy(gameObject);
             Debug.Log("Collision Detected with " + gameObject.name);
         }
     }

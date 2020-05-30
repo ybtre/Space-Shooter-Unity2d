@@ -6,6 +6,9 @@ public class Enemy : MonoBehaviour {
     [SerializeField] int health = 3;
     [SerializeField] float speed;
     [SerializeField] bool isAlive = true;
+    [SerializeField] float spawnInterval = 2f;
+
+    float spawnTimer;
 
     Player player;
     private Transform playerTransform;
@@ -21,12 +24,22 @@ public class Enemy : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (isAlive == true) {
+        spawnTimer += Time.deltaTime;
+
+        if (IsAlive()) {
             ChasePlayer();
         }
 
-        HandleDead();
+        if (health <= 0) {
+            HandleDead();
+        }
 
+        // if (!IsAlive()) {
+        // if (spawnTimer >= spawnInterval) {
+        // Instantiate(gameObject);
+        // spawnTimer = 0;
+        // }
+        // }
 
     }
 
@@ -44,12 +57,10 @@ public class Enemy : MonoBehaviour {
     }
 
     private void HandleDead() {
-        if (health <= 0) {
-            myRigidBody.gravityScale = 2;
-            SetAlive(false);
-            // Destroy(gameObject);
-            Debug.Log("Dead " + gameObject.name);
-        }
+        myRigidBody.gravityScale = 2;
+        Destroy(gameObject, 10f);
+        SetAlive(false);
+        Debug.Log("Dead " + gameObject.name);
     }
 
     private void ChasePlayer() {

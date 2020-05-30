@@ -13,6 +13,10 @@ public class Player : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        HandleMovementInput();
+    }
+
+    private void HandleMovementInput() {
         if (Input.GetKey(KeyCode.W)) {
             PlayerMovement("up", flySpeed);
         }
@@ -25,7 +29,6 @@ public class Player : MonoBehaviour {
         if (Input.GetKey(KeyCode.D)) {
             PlayerMovement("right", flySpeed);
         }
-
     }
 
     private void PlayerMovement(string direction, float speed) {

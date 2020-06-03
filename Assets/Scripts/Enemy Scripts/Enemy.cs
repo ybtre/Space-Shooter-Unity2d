@@ -3,37 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour {
-    [SerializeField] int health = 3;
+    [SerializeField] float health = 100;
     [SerializeField] float speed;
+    [SerializeField] float laserSpeed = 20;
+    [SerializeField] float shotCounter;
+    [SerializeField] float minTimeBetweenShots = 1f;
+    [SerializeField] float maxTimeBetweenShots = 3f;
+    [SerializeField] float explosionDuration = 1f;
     [SerializeField] bool isAlive = true;
-    [SerializeField] float spawnInterval = 2f;
-
-    float spawnTimer;
+    [SerializeField] GameObject projectile;
+    [SerializeField] GameObject deathVFX;
 
     Player player;
     private Transform playerTransform;
     private Rigidbody2D myRigidBody;
+    protected DamageDealer damageDealer;
 
     // Start is called before the first frame update
     void Start() {
         // playerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         player = FindObjectOfType<Player>();
-        playerTransform = player.GetComponent<Transform>();
+        // playerTransform = player.GetComponent<Transform>();
         myRigidBody = GetComponent<Rigidbody2D>();
+
+        damageDealer = FindObjectOfType<Bullet>().GetComponent<DamageDealer>();
+
+        shotCounter = Random.Range(minTimeBetweenShots, maxTimeBetweenShots);
     }
 
     // Update is called once per frame
     void Update() {
-        spawnTimer += Time.deltaTime;
+        // if (IsAlive()) {
+        //     ChasePlayer();
+        // }
 
-        if (IsAlive()) {
-            ChasePlayer();
-        }
-
+        ShootCounter();
         if (health <= 0) {
             HandleDead();
         }
 
+        if (!IsAlive()) {
+            Explosion();
+        }
         // if (!IsAlive()) {
         // if (spawnTimer >= spawnInterval) {
         // Instantiate(gameObject);
@@ -50,17 +61,41 @@ public class Enemy : MonoBehaviour {
 
     private void CheckCollisionWithBullet(Collider2D collider) {
         bool isBullet = collider.CompareTag("Bullet");
+        Debug.Log("Collision Detected with " + gameObject.name);
         if (isBullet == true) {
+            damageDealer = collider.gameObject.GetComponent<DamageDealer>();
+            if (!damageDealer) { return; };
             DecrementHealth();
-            Debug.Log("Collision Detected with " + gameObject.name);
         }
     }
 
+    private void ShootCounter() {
+        shotCounter -= Time.deltaTime;
+        if (shotCounter <= 0) {
+            Fire();
+            shotCounter = Random.Range(minTimeBetweenShots, maxTimeBetweenShots);
+        }
+    }
+
+    private void Fire() {
+        GameObject laser = Instantiate(
+             projectile,
+             transform.position,
+             Quaternion.identity
+         ) as GameObject;
+        laser.GetComponent<Transform>().Rotate(0, 0, 90);
+        laser.GetComponent<Rigidbody2D>().velocity = new Vector2(laserSpeed, 0);
+    }
     private void HandleDead() {
-        myRigidBody.gravityScale = 2;
-        Destroy(gameObject, 10f);
-        SetAlive(false);
         Debug.Log("Dead " + gameObject.name);
+        myRigidBody.gravityScale = 10;
+        Destroy(gameObject, 1f);
+        SetAlive(false);
+    }
+
+    private void Explosion() {
+        GameObject explosion = Instantiate(deathVFX, transform.position, transform.rotation);
+        Destroy(explosion, explosionDuration);
     }
 
     private void ChasePlayer() {
@@ -76,7 +111,7 @@ public class Enemy : MonoBehaviour {
     }
 
     public void DecrementHealth() {
-        health--;
+        health -= damageDealer.GetDamage();
         Debug.Log("Enemey has taken damage" + gameObject.name);
     }
 

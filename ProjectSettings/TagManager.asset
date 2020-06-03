@@ -7,6 +7,7 @@ TagManager:
   - Water
   - Enemy
   - Bullet
+  - EnemyLaser
   layers:
   - Default
   - TransparentFX
@@ -16,10 +17,10 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Enemy
+  - Player Laser
+  - Enemy Laser
   - 
   - 
   - 
@@ -41,6 +42,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Projectiles
+    uniqueID: 1334226163
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

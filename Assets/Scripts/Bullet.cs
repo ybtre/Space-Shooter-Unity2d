@@ -5,10 +5,8 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
 
     [SerializeField] float speed = 5f;
-    [SerializeField] bool hasFired = false;
     [SerializeField] bool isAlive = false;
     Player player;
-    PlayerShoot bulletInstance;
     Rigidbody2D myRigidBody2D;
     // Start is called before the first frame update
     void Start() {
@@ -23,7 +21,7 @@ public class Bullet : MonoBehaviour {
     }
 
     private void HandleDeathOnTimer() {
-        Destroy(gameObject, 3f);
+        Destroy(gameObject, 2f);
     }
 
     private void OnTriggerEnter2D(Collider2D collider) {
@@ -37,8 +35,8 @@ public class Bullet : MonoBehaviour {
     private void CheckCollisionWithEnemy(Collider2D collider) {
         bool isEnemy = collider.CompareTag("Enemy");
         if (isEnemy == true) {
-            // Destroy(gameObject);
-            Debug.Log("Collision Detected with " + gameObject.name);
+            Destroy(gameObject);
+            // Debug.Log("Collision Detected with " + gameObject.name);
         }
     }
 }
